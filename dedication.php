@@ -36,6 +36,7 @@ require_once('dedication_lib.php');
 $action = optional_param('action', 'all', PARAM_ALPHANUM);
 $id = optional_param('id', 0, PARAM_INT);
 $download = optional_param('download', false, PARAM_BOOL);
+$csv = optional_param('csv', false, PARAM_BOOL);
 
 // Current url.
 $pageurl = new moodle_url('/blocks/dedication/dedication.php');
@@ -100,7 +101,7 @@ switch ($action) {
 
         $dm = new block_dedication_manager($course, $mintime, $maxtime, $limit);
         if ($download) {
-            $dm->download_user_dedication($user);
+            $dm->download_user_dedication($user, $csv);
             exit;
         }
 
@@ -161,7 +162,7 @@ switch ($action) {
         $dm = new block_dedication_manager($course, $mintime, $maxtime, $limit);
         $rows = $dm->get_students_dedication($students);
         if ($download) {
-            $dm->download_students_dedication($rows);
+            $dm->download_students_dedication($rows, $csv);
             exit;
         }
 
@@ -212,6 +213,8 @@ foreach ($view->header as $header) {
 // Download button.
 echo html_writer::start_tag('div', array('class' => 'download-dedication'));
 echo $OUTPUT->single_button(new moodle_url($pageurl, array('download' => true)), get_string('downloadexcel'), 'get');
+echo $OUTPUT->single_button(new moodle_url($pageurl, array('download' => true, 'csv' => true)),
+                                get_string('downloadcsv', 'block_dedication'), 'get');
 echo html_writer::end_tag('div');
 
 // Format table headers if they exists.

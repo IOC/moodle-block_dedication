@@ -88,7 +88,7 @@ class block_dedication_manager {
         return $rows;
     }
 
-    public function download_students_dedication($rows) {
+    public function download_students_dedication($rows, $csv = false) {
         $groups = groups_get_all_groups($this->course->id);
 
         $headers = array(
@@ -124,7 +124,7 @@ class block_dedication_manager {
 
         $rows = array_merge($headers, $rows);
 
-        return block_dedication_utils::generate_download("{$this->course->shortname}_dedication", $rows);
+        block_dedication_utils::generate_download("{$this->course->shortname}_dedication", $rows, $csv);
     }
 
     public function get_user_dedication($user, $simple = false) {
@@ -198,7 +198,7 @@ class block_dedication_manager {
     }
 
     // Downloads user dedication with passed data.
-    public function download_user_dedication($user) {
+    public function download_user_dedication($user, $csv = false) {
         $headers = array(
             array(
                 get_string('sincerow', 'block_dedication'),
@@ -233,7 +233,7 @@ class block_dedication_manager {
 
         $rows = array_merge($headers, $rows);
 
-        return block_dedication_utils::generate_download("{$this->course->shortname}_dedication", $rows);
+        return block_dedication_utils::generate_download("{$this->course->shortname}_dedication", $rows, $csv);
     }
 
 }
@@ -360,26 +360,33 @@ class block_dedication_utils {
     }
 
     // Generates generic Excel file for download.
-    public static function generate_download($downloadname, $rows) {
+    public static function generate_download($downloadname, $rows, $csv = false) {
         global $CFG;
 
-        require_once($CFG->libdir . '/excellib.class.php');
-
-        $workbook = new MoodleExcelWorkbook(clean_filename($downloadname));
-
-        $myxls = $workbook->add_worksheet(get_string('pluginname', 'block_dedication'));
-
-        $rowcount = 0;
-        foreach ($rows as $row) {
-            foreach ($row as $index => $content) {
-                $myxls->write($rowcount, $index, $content);
+        if ($csv) {
+            $csvexport = new csv_export_writer();
+            $csvexport->set_filename(clean_filename($downloadname));
+            foreach ($rows as $row) {
+                $csvexport->add_data($row);
             }
-            $rowcount++;
+            $csvexport->download_file();
+        } else {
+            require_once($CFG->libdir . '/excellib.class.php');
+
+            $workbook = new MoodleExcelWorkbook(clean_filename($downloadname));
+
+            $myxls = $workbook->add_worksheet(get_string('pluginname', 'block_dedication'));
+
+            $rowcount = 0;
+            foreach ($rows as $row) {
+                foreach ($row as $index => $content) {
+                    $myxls->write($rowcount, $index, $content);
+                }
+                $rowcount++;
+            }
+
+            $workbook->close();
         }
-
-        $workbook->close();
-
-        return $workbook;
     }
 
 }
