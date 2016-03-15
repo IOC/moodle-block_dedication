@@ -60,6 +60,14 @@ class block_dedication extends block_base {
 
         if ($this->config->show_dedication == 1) {
             require_once('dedication_lib.php');
+            // Check if user is in grouping or has access to show the block.
+            $cannotviewblock = isset($this->config->grouping_dedication) &&
+                    $this->config->grouping_dedication &&
+                    !has_capability('moodle/site:accessallgroups', $this->context) &&
+                    !array_key_exists($USER->id, groups_get_grouping_members($this->config->grouping_dedication));
+            if ($cannotviewblock) {
+                return $this->content;
+            }
             $mintime = $this->page->course->startdate;
             $maxtime = time();
             $dm = new block_dedication_manager($this->page->course, $mintime, $maxtime, $this->config->limit);

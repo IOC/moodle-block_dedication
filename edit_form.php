@@ -23,7 +23,21 @@ class block_dedication_edit_form extends block_edit_form {
 
         $mform->addElement('selectyesno', 'config_show_dedication', get_string('show_dedication', 'block_dedication'));
         $mform->addHelpButton('config_show_dedication', 'show_dedication', 'block_dedication');
-        $mform->setDefault('config_text', 0);
+        $mform->setDefault('config_show_dedication', 0);
+
+        // Allow the block to be visible to all participants or only to an specific grouping
+        $groupings = groups_get_all_groupings($this->page->course->id);
+        if (!empty($groupings)) {
+            $groupingsmenu = array();
+            $groupingsmenu[0] = get_string('allparticipants');
+            foreach ($groupings as $grouping) {
+                $groupingsmenu[$grouping->id] = format_string($grouping->name);
+            }
+            $mform->addElement('select', 'config_grouping_dedication', get_string('grouping_dedication', 'block_dedication'), $groupingsmenu);
+            $mform->addHelpButton('config_grouping_dedication', 'grouping_dedication', 'block_dedication');
+            $mform->setDefault('config_grouping_dedication', '0');
+            $mform->disabledIf('config_grouping_dedication', 'config_show_dedication', 'eq', 0);
+        }
 
         $limitopts = array();
         for ($i = 1; $i <= 150; $i++) {
