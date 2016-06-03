@@ -39,6 +39,8 @@ class block_dedication_manager {
     public function get_students_dedication($students) {
         global $DB;
 
+        core_php_time_limit::raise();
+
         $rows = array();
 
         $where = 'courseid = :courseid AND userid = :userid AND timecreated >= :mintime AND timecreated <= :maxtime';
