@@ -38,12 +38,14 @@ $id = optional_param('id', 0, PARAM_INT);
 $download = optional_param('download', false, PARAM_BOOL);
 $csv = optional_param('csv', false, PARAM_BOOL);
 
+$actionurl = ($action != 'firstaccess' ? $action : '');
+
 // Current url.
 $pageurl = new moodle_url('/blocks/dedication/dedication.php');
 $pageurl->params(array(
     'courseid' => $courseid,
     'instanceid' => $instanceid,
-    'action' => $action,
+    'action' => $actionurl,
     'id' => $id,
 ));
 
@@ -91,6 +93,7 @@ $view->table = new html_table();
 $view->table->attributes = array('class' => $tablestyles['table_class'] . " table-$action");
 
 switch ($action) {
+    case 'firstaccess': break;
     case 'user':
         $userid = required_param('id', PARAM_INT);
 

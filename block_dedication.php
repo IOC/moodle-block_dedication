@@ -82,6 +82,7 @@ class block_dedication extends block_base {
             $url = new moodle_url('/blocks/dedication/dedication.php', array(
                 'courseid' => $this->page->course->id,
                 'instanceid' => $this->instance->id,
+                'action' => 'firstaccess',
             ));
             $this->content->footer .= $OUTPUT->single_button($url, get_string('access_button', 'block_dedication'), 'get');
         }
