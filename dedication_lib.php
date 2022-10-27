@@ -106,6 +106,7 @@ class block_dedication_manager {
             array(
                 get_string('firstname'),
                 get_string('lastname'),
+                get_string('email'),
                 get_string('group'),
                 get_string('dedicationrow', 'block_dedication') . ' (' . get_string('mins') . ')',
                 get_string('dedicationrow', 'block_dedication'),
@@ -117,6 +118,7 @@ class block_dedication_manager {
             $rows[$index] = array(
                 $row->user->firstname,
                 $row->user->lastname,
+                $row->user->email,
                 isset($groups[$row->groupid]) ? $groups[$row->groupid]->name : '',
                 round($row->dedicationtime / MINSECS),
                 block_dedication_utils::format_dedication($row->dedicationtime),
